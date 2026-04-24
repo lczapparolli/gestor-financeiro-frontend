@@ -13,10 +13,32 @@ export const contaService = {
   },
 
   async listar(): Promise<Conta[]> {
-    const resposta = await fetch(`${API_URL}/conta?ativas=true`, {
+    const resposta = await fetch(`${API_URL}/conta`, {
       method: "GET"
     });
 
     return await resposta.json();
+  },
+
+  async atualizar(conta: Conta): Promise<Conta> {
+    const resposta = await fetch(`${API_URL}/conta/${conta.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(conta)
+    });
+
+    return await resposta.json();
+  },
+
+  async desativar(idConta: number): Promise<void> {
+    await fetch(`${API_URL}/conta/${idConta}/desativar`, {
+      method: "PUT"
+    });
+  },
+
+  async reativar(idConta: number): Promise<void> {
+    await fetch(`${API_URL}/conta/${idConta}/reativar`, {
+      method: "PUT"
+    });
   }
 };

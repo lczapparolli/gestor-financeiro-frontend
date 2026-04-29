@@ -10,6 +10,7 @@ import { RouterView } from 'vue-router'
       <v-navigation-drawer>
         <v-list nav>
           <v-list-item title="Contas" to="/contas" link></v-list-item>
+          <v-list-item title="Categorias" to="/categorias" link></v-list-item>
         </v-list>
       </v-navigation-drawer>
 

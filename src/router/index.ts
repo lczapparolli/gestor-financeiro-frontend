@@ -27,6 +27,11 @@ const router = createRouter({
       name: 'categorias',
       component: () => import('../views/CategoriaView.vue'),
     },
+    {
+      path: '/previsoes',
+      name: 'previsoes',
+      component: () => import('../views/PrevisaoView.vue'),
+    },
   ],
 })
 

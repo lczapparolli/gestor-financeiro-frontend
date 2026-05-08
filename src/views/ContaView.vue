@@ -13,9 +13,9 @@ onMounted(() => {
   store.carregarContas();
 });
 
-const alternarStatus = async (conta: Conta) => {
+const desativarConta = async (conta: Conta) => {
   try {
-    await store.alterarStatus(conta);
+    await store.desativarConta(conta);
   } catch (error) {
     console.error('Erro ao alterar o status da conta: ', error);
   }
@@ -64,7 +64,7 @@ const adicionarConta = async () => {
       <thead>
         <tr>
           <th class="text-left font-weight-bold">Descrição</th>
-          <th class="text-center font-weight-bold" style="width: 120px">Ativo</th>
+          <th class="text-center font-weight-bold" style="width: 120px"></th>
         </tr>
       </thead>
 
@@ -86,9 +86,7 @@ const adicionarConta = async () => {
           </td>
 
           <td class="text-center">
-            <v-btn :icon="conta.ativo ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'"
-              :color="conta.ativo ? 'sucess' : 'grey-darken-1'" variant="text" size="large"
-              @click="alternarStatus(conta)" />
+            <v-btn icon="mdi-trash-can" color="error" variant="text" size="large" @click="desativarConta(conta)" />
           </td>
         </tr>
 

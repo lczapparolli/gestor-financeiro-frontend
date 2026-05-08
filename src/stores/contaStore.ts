@@ -16,18 +16,12 @@ export const useContaStore = defineStore("conta", {
       this.contas.push(conta);
     },
 
-    async alterarStatus(conta: Conta) {
+    async desativarConta(conta: Conta) {
       if (!conta.id) return;
+      await contaService.desativar(conta.id);
 
-      if (conta.ativo) {
-        await contaService.desativar(conta.id);
-      } else {
-        await contaService.reativar(conta.id);
-      }
-
-      const indice = this.contas.findIndex(c => c.id === conta.id);
-      if (indice > -1 && this.contas[indice])
-        this.contas[indice].ativo = !conta.ativo;
+      const novaLista = this.contas.filter(c => c.id !== conta.id);
+      this.contas = novaLista;
     },
 
     async atualizarConta(conta: Conta) {

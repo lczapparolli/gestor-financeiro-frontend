@@ -16,18 +16,13 @@ export const useCategoriaStore = defineStore("categoria", {
       this.categorias.push(categoria);
     },
 
-    async alterarStatus(categoria: Categoria) {
+    async desativarCategoria(categoria: Categoria) {
       if (!categoria.id) return;
 
-      if (categoria.ativo) {
-        await categoriaService.desativar(categoria.id);
-      } else {
-        await categoriaService.reativar(categoria.id);
-      }
+      await categoriaService.desativar(categoria.id);
 
-      const indice = this.categorias.findIndex(c => c.id === categoria.id);
-      if (indice > -1 && this.categorias[indice])
-        this.categorias[indice].ativo = !categoria.ativo;
+      const novaLista = this.categorias.filter(c => c.id !== categoria.id);
+      this.categorias = novaLista;
     },
 
     async atualizarCategoria(categoria: Categoria) {

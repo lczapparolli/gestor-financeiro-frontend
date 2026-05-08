@@ -13,7 +13,7 @@ export const categoriaService = {
   },
 
   async listar(): Promise<Categoria[]> {
-    const resposta = await fetch(`${API_URL}/categoria`, {
+    const resposta = await fetch(`${API_URL}/categoria?ativas=true`, {
       method: "GET"
     });
 
@@ -31,14 +31,9 @@ export const categoriaService = {
   },
 
   async desativar(idCategoria: number): Promise<void> {
-    await fetch(`${API_URL}/categoria/${idCategoria}/desativar`, {
-      method: "PUT"
-    });
-  },
-
-  async reativar(idCategoria: number): Promise<void> {
-    await fetch(`${API_URL}/categoria/${idCategoria}/reativar`, {
-      method: "PUT"
+    await fetch(`${API_URL}/categoria/${idCategoria}`, {
+      method: "DELETE"
     });
   }
+
 };

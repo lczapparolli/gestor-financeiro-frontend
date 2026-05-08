@@ -13,9 +13,9 @@ onMounted(() => {
   store.carregarCategorias();
 });
 
-const alternarStatus = async (categoria: Categoria) => {
+const desativarCategoria = async (categoria: Categoria) => {
   try {
-    await store.alterarStatus(categoria);
+    await store.desativarCategoria(categoria);
   } catch (error) {
     console.error('Erro ao alterar o status da categoria: ', error);
   }
@@ -64,7 +64,7 @@ const adicionarCategoria = async () => {
       <thead>
         <tr>
           <th class="text-left font-weight-bold">Descrição</th>
-          <th class="text-center font-weight-bold" style="width: 120px">Ativo</th>
+          <th class="text-center font-weight-bold" style="width: 120px"></th>
         </tr>
       </thead>
 
@@ -87,9 +87,8 @@ const adicionarCategoria = async () => {
           </td>
 
           <td class="text-center">
-            <v-btn :icon="categoria.ativo ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'"
-              :color="categoria.ativo ? 'sucess' : 'grey-darken-1'" variant="text" size="large"
-              @click="alternarStatus(categoria)" />
+            <v-btn icon="mdi-trash-can" color="error" variant="text" size="large"
+              @click="desativarCategoria(categoria)" />
           </td>
         </tr>
 

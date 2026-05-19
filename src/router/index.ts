@@ -37,6 +37,11 @@ const router = createRouter({
       name: 'movimentos',
       component: () => import('../views/MovimentoView.vue'),
     },
+    {
+      path: '/cartoes',
+      name: 'cartoes',
+      component: () => import('../views/CartaoView.vue'),
+    }
   ],
 })
 

@@ -4,11 +4,16 @@ import type { Conta } from "@/types/conta";
 
 export const useContaStore = defineStore("conta", {
   state: () => ({
-    contas: [] as Conta[]
+    contas: [] as Conta[],
+    contasComCartoes: [] as Conta[]
   }),
   actions: {
     async carregarContas(): Promise<void> {
-      this.contas = await contaService.listar();
+      this.contas = await contaService.listar(false);
+    },
+
+    async carregarContasComCartoes(): Promise<void> {
+      this.contasComCartoes = await contaService.listar(true);
     },
 
     async adicionarConta(descricao: string) {

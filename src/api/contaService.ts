@@ -12,8 +12,8 @@ export const contaService = {
     return await resposta.json();
   },
 
-  async listar(): Promise<Conta[]> {
-    const resposta = await fetch(`${API_URL}/conta?ativas=true`, {
+  async listar(incluirCartoes: boolean): Promise<Conta[]> {
+    const resposta = await fetch(`${API_URL}/conta?incluirCartoes=${incluirCartoes ? 'true' : 'false'}`, {
       method: "GET"
     });
 

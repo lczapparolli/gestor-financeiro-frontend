@@ -90,7 +90,7 @@ const desativarMovimento = async (movimento: Movimento) => {
 
 onMounted(() => {
   movimentoStore.carregarMovimentos(periodo.value);
-  contaStore.carregarContas();
+  contaStore.carregarContasComCartoes();
   categoriaStore.carregarCategorias();
 });
 
@@ -133,8 +133,9 @@ onMounted(() => {
                 hide-details></v-text-field>
             </td>
             <td>
-              <v-autocomplete v-model="movimentoEdicao.conta.id" :items="contaStore.contas" item-title="descricao"
-                item-value="id" variant="underlined" density="compact" hide-details></v-autocomplete>
+              <v-autocomplete v-model="movimentoEdicao.conta.id" :items="contaStore.contasComCartoes"
+                item-title="descricao" item-value="id" variant="underlined" density="compact"
+                hide-details></v-autocomplete>
             </td>
             <td>
               <v-autocomplete v-model="movimentoEdicao.categoria.id" :items="categoriaStore.categorias"
@@ -175,7 +176,7 @@ onMounted(() => {
               hide-details></v-text-field>
           </td>
           <td>
-            <v-autocomplete v-model="movimentoNovo.conta.id" :items="contaStore.contas" item-title="descricao"
+            <v-autocomplete v-model="movimentoNovo.conta.id" :items="contaStore.contasComCartoes" item-title="descricao"
               item-value="id" variant="underlined" density="compact" hide-details></v-autocomplete>
           </td>
           <td>

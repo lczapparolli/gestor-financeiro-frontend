@@ -1,6 +1,7 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { usePrevisaoStore } from '@/stores/previsaoStore';
+import type { Previsao } from '@/types/previsao';
 
 const store = usePrevisaoStore();
 
@@ -8,7 +9,7 @@ const dataReferencia = ref(new Date());
 const nomeMesAtual = computed(() => dataReferencia.value.toLocaleString('pt-BR', { month: 'long' }));
 const anoAtual = computed(() => dataReferencia.value.getFullYear());
 
-const idCategoriaEdicao = ref(null);
+const idCategoriaEdicao = ref<number | null>(null);
 const valorEdicao = ref(0);
 
 const totalGeral = computed(() => store.previsoes.reduce((acc, current) => acc + (current.valor || 0), 0));
@@ -24,7 +25,7 @@ const totalCor = computed(() => {
   return 'grey';
 });
 
-const alterarMes = (delta) => {
+const alterarMes = (delta: number) => {
   const novaData = new Date(dataReferencia.value);
   novaData.setMonth(novaData.getMonth() + delta);
   dataReferencia.value = novaData;
@@ -52,9 +53,9 @@ const salvarPrevisao = async () => {
   }
 }
 
-const iniciarEdicao = (idCategoria, valorAtual) => {
-  idCategoriaEdicao.value = idCategoria;
-  valorEdicao.value = valorAtual;
+const iniciarEdicao = (previsao: Previsao) => {
+  idCategoriaEdicao.value = previsao.categoria.id ?? null;
+  valorEdicao.value = previsao.valor ?? 0;
 }
 
 const cancelarEdicao = () => {
@@ -105,8 +106,7 @@ onMounted(() => {
                 @click="cancelarEdicao"></v-btn>
             </div>
 
-            <div v-else class="editable-value d-flex align-center justify-end"
-              @click="iniciarEdicao(previsao.categoria.id, previsao.valor)">
+            <div v-else class="editable-value d-flex align-center justify-end" @click="iniciarEdicao(previsao)">
               <span>{{ formatter.format(previsao.valor) }}</span>
               <v-icon size="x-small" class="edit-icon ml-2" color="grey">mdi-pencil</v-icon>
             </div>

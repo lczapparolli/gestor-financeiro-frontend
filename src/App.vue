@@ -14,6 +14,7 @@ import { RouterView } from 'vue-router'
           <v-list-item title="Categorias" to="/categorias" link></v-list-item>
           <v-list-item title="Previsões" to="/previsoes" link></v-list-item>
           <v-list-item title="Movimentos" to="/movimentos" link></v-list-item>
+          <v-list-item title="Contas a Pagar" to="/contasPagar" link></v-list-item>
         </v-list>
       </v-navigation-drawer>
 

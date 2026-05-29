@@ -17,8 +17,6 @@ export const contaPagarService = {
   },
 
   async adicionar(contaPagar: ContaPagar): Promise<ContaPagarRaw> {
-    console.log('Salvando conta a pagar:');
-    console.log(contaPagar);
     const resposta = await fetch(`${API_URL}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -28,8 +26,6 @@ export const contaPagarService = {
   },
 
   async atualizar(contaPagar: ContaPagar): Promise<ContaPagarRaw> {
-    console.log('Atualizando conta a pagar:');
-    console.log(contaPagar);
     const resposta = await fetch(`${API_URL}/${contaPagar.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -44,4 +40,17 @@ export const contaPagarService = {
       method: "DELETE"
     });
   },
+
+  async clonar(origem: Date, destino: Date): Promise<ContaPagarRaw[]> {
+    const resposta = await fetch(`${API_URL}/clonar`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        "origem": `${origem.getFullYear()}-${(origem.getMonth() + 1).toString().padStart(2, "0")}-${origem.getDate().toString().padStart(2, "0")}`,
+        "destino": `${destino.getFullYear()}-${(destino.getMonth() + 1).toString().padStart(2, "0")}-${destino.getDate().toString().padStart(2, "0")}`
+      })
+    });
+
+    return await resposta.json();
+  }
 };

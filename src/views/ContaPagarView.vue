@@ -73,6 +73,7 @@ const cancelarEdicao = () => {
 
 const salvarInclusao = async () => {
   try {
+    contaPagarNova.value.periodo = periodo.value;
     await contaPagarStore.adicionarContaPagar(contaPagarNova.value);
     contaPagarNova.value = contaPagarStore.criarContaPagarVazia(periodo.value);
   } catch (error) {
@@ -86,6 +87,13 @@ const desativarContaPagar = async (contaPagar: ContaPagar) => {
   } catch (error) {
     console.error(`Não foi possível excluir a conta a pagar. Erro: ${error}`);
   }
+}
+
+const clonarPeriodoAnterior = async () => {
+  const anterior = new Date(periodo.value);
+  anterior.setMonth(anterior.getMonth() - 1);
+
+  await contaPagarStore.clonarPeriodo(anterior, periodo.value);
 }
 
 onMounted(() => {
@@ -109,6 +117,11 @@ onMounted(() => {
 
       <v-col cols="auto">
         <v-btn icon="mdi-chevron-right" variant="text" @click="alterarMes(1)"></v-btn>
+      </v-col>
+    </v-row>
+    <v-row align="center" justify="end" class="mb-6">
+      <v-col cols="auto">
+        <v-btn prepend-icon="mdi-content-copy" @click="clonarPeriodoAnterior()">Copiar período anterior</v-btn>
       </v-col>
     </v-row>
 

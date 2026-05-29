@@ -31,6 +31,11 @@ export const useContaPagarStore = defineStore("contaPagar", {
       this.contasPagar = novaLista;
     },
 
+    async clonarPeriodo(periodoOrigem: Date, periodoDestino: Date): Promise<void> {
+      const novos = await contaPagarService.clonar(periodoOrigem, periodoDestino);
+      this.contasPagar = this.contasPagar.concat(novos.map(raw => this.converterRaw(raw)));
+    },
+
     converterRaw(raw: ContaPagarRaw): ContaPagar {
       return {
         id: raw.id,

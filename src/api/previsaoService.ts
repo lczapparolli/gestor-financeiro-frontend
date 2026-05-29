@@ -40,4 +40,17 @@ export const previsaoService = {
       method: "DELETE"
     });
   },
+
+  async clonar(origem: Date, destino: Date): Promise<Previsao[]> {
+    const resposta = await fetch(`${API_URL}/clonar`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        "origem": `${origem.getFullYear()}-${(origem.getMonth() + 1).toString().padStart(2, "0")}-${origem.getDate().toString().padStart(2, "0")}`,
+        "destino": `${destino.getFullYear()}-${(destino.getMonth() + 1).toString().padStart(2, "0")}-${destino.getDate().toString().padStart(2, "0")}`
+      })
+    });
+
+    return await resposta.json();
+  }
 };

@@ -11,12 +11,15 @@ export const usePrevisaoStore = defineStore("previsao", {
       this.previsoes = await previsaoService.listar(periodo);
     },
 
-    async salvarPrevisao(idCategoria: number, periodo: Date, valor: number) {
+    async salvarPrevisao(idCategoria: number, valor: number) {
       const indice = this.previsoes.findIndex(p => p.categoria.id === idCategoria);
       if (indice < 0 && !this.previsoes[indice])
         return;
 
       const previsao = this.previsoes[indice];
+      if (!previsao)
+        return;
+
       previsao.valor = valor;
 
       if (previsao.id) {
@@ -26,6 +29,11 @@ export const usePrevisaoStore = defineStore("previsao", {
         this.previsoes[indice] = atualizada;
       }
     },
+
+    async clonarPeriodo(periodoOrigem: Date, periodoDestino: Date): Promise<void> {
+      await previsaoService.clonar(periodoOrigem, periodoDestino);
+      await this.carregarPrevisoes(periodoDestino);
+    }
 
   }
 })

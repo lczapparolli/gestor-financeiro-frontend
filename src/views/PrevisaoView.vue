@@ -45,12 +45,19 @@ const salvarPrevisao = async () => {
   try {
     console.log(`Salvando previsao: ${idCategoriaEdicao.value} - ${valorEdicao.value}`);
     if (idCategoriaEdicao.value) {
-      await store.salvarPrevisao(idCategoriaEdicao.value, dataReferencia.value, valorEdicao.value);
+      await store.salvarPrevisao(idCategoriaEdicao.value, valorEdicao.value);
       cancelarEdicao();
     }
   } catch (exception) {
     console.error(`Erro ao salvar a previsão: ${exception}`);
   }
+}
+
+const clonarPeriodoAnterior = async () => {
+  const anterior = new Date(dataReferencia.value);
+  anterior.setMonth(anterior.getMonth() - 1);
+
+  await store.clonarPeriodo(anterior, dataReferencia.value);
 }
 
 const iniciarEdicao = (previsao: Previsao) => {
@@ -83,6 +90,11 @@ onMounted(() => {
 
       <v-col cols="auto">
         <v-btn icon="mdi-chevron-right" variant="text" @click="alterarMes(1)"></v-btn>
+      </v-col>
+    </v-row>
+    <v-row align="center" justify="end" class="mb-6">
+      <v-col cols="auto">
+        <v-btn prepend-icon="mdi-content-copy" @click="clonarPeriodoAnterior()">Copiar período anterior</v-btn>
       </v-col>
     </v-row>
 

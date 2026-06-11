@@ -1,21 +1,23 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import type { Movimento } from '@/types/movimento';
+import { criarVazio, type Movimento } from '@/types/movimento';
 import { useContaStore } from '@/stores/contaStore';
 import { useCategoriaStore } from '@/stores/categoriaStore';
 import { useMovimentoStore } from '@/stores/movimentoStore';
+import { useContaPagarStore } from '@/stores/contaPagarStore';
 
 const movimentoStore = useMovimentoStore();
 const contaStore = useContaStore();
 const categoriaStore = useCategoriaStore();
+const contaPagarStore = useContaPagarStore();
 
 const periodo = ref(new Date());
 const nomeMesAtual = computed(() => periodo.value.toLocaleString('pt-BR', { month: 'long' }));
 const anoAtual = computed(() => periodo.value.getFullYear());
 
 const idEdicao = ref<number | null>(null);
-const movimentoNovo = ref<Movimento>(movimentoStore.criarMovimentoVazio(periodo.value));
-const movimentoEdicao = ref<Movimento>(movimentoStore.criarMovimentoVazio(periodo.value));
+const movimentoNovo = ref<Movimento>(criarVazio(periodo.value));
+const movimentoEdicao = ref<Movimento>(criarVazio(periodo.value));
 const edicaoData = computed({
   get() {
     if (!movimentoEdicao.value || !movimentoEdicao.value.data) {
@@ -48,6 +50,7 @@ const alterarMes = (delta: number) => {
   novaData.setMonth(novaData.getMonth() + delta);
   periodo.value = novaData;
   movimentoStore.carregarMovimentos(periodo.value);
+  contaPagarStore.carregarContasPagar(periodo.value);
 }
 
 const iniciarEdicao = (movimento: Movimento) => {
@@ -68,13 +71,13 @@ const salvarEdicao = async () => {
 
 const cancelarEdicao = () => {
   idEdicao.value = null;
-  movimentoEdicao.value = movimentoStore.criarMovimentoVazio(periodo.value);
+  movimentoEdicao.value = criarVazio(periodo.value);
 }
 
 const salvarInclusao = async () => {
   try {
     await movimentoStore.adicionarMovimento(movimentoNovo.value);
-    movimentoNovo.value = movimentoStore.criarMovimentoVazio(periodo.value);
+    movimentoNovo.value = criarVazio(periodo.value);
   } catch (error) {
     console.error(`Não foi possível incluir o movimento. Erro: ${error}`);
   }
@@ -90,6 +93,7 @@ const desativarMovimento = async (movimento: Movimento) => {
 
 onMounted(() => {
   movimentoStore.carregarMovimentos(periodo.value);
+  contaPagarStore.carregarContasPagar(periodo.value);
   contaStore.carregarContasComCartoes();
   categoriaStore.carregarCategorias();
 });
@@ -119,6 +123,7 @@ onMounted(() => {
           <th class="font-weight-bold">Data</th>
           <th class="font-weight-bold">Conta</th>
           <th class="font-weight-bold">Categoria</th>
+          <th class="font-weight-bold">Conta pagar</th>
           <th class="font-weight-bold">Descrição</th>
           <th class="font-weight-bold text-right">Valor</th>
           <th class="font-weight-bold text-center">Ações</th>
@@ -143,6 +148,11 @@ onMounted(() => {
                 hide-details></v-autocomplete>
             </td>
             <td>
+              <v-autocomplete v-model="movimentoEdicao.contaPagar.id" :items="contaPagarStore.contasPagar"
+                item-title="descricao" item-value="id" variant="underlined" density="compact"
+                hide-details></v-autocomplete>
+            </td>
+            <td>
               <v-text-field v-model="movimentoEdicao.descricao" variant="underlined" density="compact"
                 hide-details></v-text-field>
             </td>
@@ -160,6 +170,7 @@ onMounted(() => {
             <td>{{ formatoData.format(movimento.data) }}</td>
             <td>{{ movimento.conta.descricao }}</td>
             <td>{{ movimento.categoria.descricao }}</td>
+            <td>{{ movimento.contaPagar.descricao }}</td>
             <td>{{ movimento.descricao }}</td>
             <td class="text-right">{{ formatoNumero.format(movimento.valor) }}</td>
             <td class="text-center">
@@ -181,6 +192,11 @@ onMounted(() => {
           </td>
           <td>
             <v-autocomplete v-model="movimentoNovo.categoria.id" :items="categoriaStore.categorias"
+              item-title="descricao" item-value="id" variant="underlined" density="compact"
+              hide-details></v-autocomplete>
+          </td>
+          <td>
+            <v-autocomplete v-model="movimentoNovo.contaPagar.id" :items="contaPagarStore.contasPagar"
               item-title="descricao" item-value="id" variant="underlined" density="compact"
               hide-details></v-autocomplete>
           </td>

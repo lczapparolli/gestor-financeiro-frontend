@@ -20,3 +20,28 @@ export interface ContaPagarRaw {
   };
   periodo: Date;
 }
+
+export const converterRaw = (raw: ContaPagarRaw): ContaPagar => {
+  return {
+    id: raw.id,
+    categoria: {
+      id: raw.categoria.id,
+      descricao: raw.categoria.descricao
+    },
+    descricao: raw.descricao,
+    vencimento: raw.vencimento ? new Date(`${raw.vencimento}T00:00:00`) : undefined,
+    periodo: new Date(`${raw.periodo}T00:00:00`),
+    valor: raw.valor
+  }
+}
+
+export const criarVazio = (periodo: Date): ContaPagar => {
+  return {
+    descricao: '',
+    categoria: { descricao: '' },
+    valor: 0,
+    vencimento: undefined,
+    periodo: periodo
+  };
+}
+

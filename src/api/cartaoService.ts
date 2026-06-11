@@ -4,7 +4,7 @@ const API_URL = "/api/cartao-credito"
 
 export const cartaoService = {
   async adicionar(cartao: CartaoCredito): Promise<CartaoCredito> {
-    const resposta = await fetch(API_URL, {
+    const resposta = await fetch(`${API_URL}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(cartao)
@@ -13,7 +13,7 @@ export const cartaoService = {
   },
 
   async listar(): Promise<CartaoCredito[]> {
-    const resposta = await fetch(API_URL, {
+    const resposta = await fetch(`${API_URL}`, {
       method: "GET"
     });
 

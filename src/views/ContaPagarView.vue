@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import type { ContaPagar } from '@/types/contaPagar';
+import { criarVazio, type ContaPagar } from '@/types/contaPagar';
 import { useCategoriaStore } from '@/stores/categoriaStore';
 import { useContaPagarStore } from '@/stores/contaPagarStore';
 
@@ -12,8 +12,8 @@ const nomeMesAtual = computed(() => periodo.value.toLocaleString('pt-BR', { mont
 const anoAtual = computed(() => periodo.value.getFullYear());
 
 const idEdicao = ref<number | null>(null);
-const contaPagarNova = ref<ContaPagar>(contaPagarStore.criarContaPagarVazia(periodo.value));
-const contaPagarEdicao = ref<ContaPagar>(contaPagarStore.criarContaPagarVazia(periodo.value));
+const contaPagarNova = ref<ContaPagar>(criarVazio(periodo.value));
+const contaPagarEdicao = ref<ContaPagar>(criarVazio(periodo.value));
 const edicaoData = computed({
   get() {
     if (!contaPagarEdicao.value || !contaPagarEdicao.value.vencimento) {
@@ -68,14 +68,14 @@ const salvarEdicao = async () => {
 
 const cancelarEdicao = () => {
   idEdicao.value = null;
-  contaPagarEdicao.value = contaPagarStore.criarContaPagarVazia(periodo.value);
+  contaPagarEdicao.value = criarVazio(periodo.value);
 }
 
 const salvarInclusao = async () => {
   try {
     contaPagarNova.value.periodo = periodo.value;
     await contaPagarStore.adicionarContaPagar(contaPagarNova.value);
-    contaPagarNova.value = contaPagarStore.criarContaPagarVazia(periodo.value);
+    contaPagarNova.value = criarVazio(periodo.value);
   } catch (error) {
     console.error(`Não foi possível incluir a conta a pagar. Erro: ${error}`);
   }

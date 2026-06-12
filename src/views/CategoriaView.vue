@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useCategoriaStore } from "@/stores/categoriaStore";
-import type { Categoria } from "@/types/categoria";
+import { criarVazia, type Categoria } from "@/types/categoria";
 
 const store = useCategoriaStore();
 
-const descricaoNovaCategoria = ref('');
+const categoriaNova = ref(criarVazia());
 const idEdicao = ref(0);
-const descricaoEdicao = ref('');
+const categoriaEdicao = ref(criarVazia());
 
 onMounted(() => {
   store.carregarCategorias();
@@ -23,20 +23,19 @@ const desativarCategoria = async (categoria: Categoria) => {
 
 const iniciarEdicao = (categoria: Categoria) => {
   idEdicao.value = categoria.id || 0;
-  descricaoEdicao.value = categoria.descricao;
+  categoriaEdicao.value = { ...categoria };
 }
 
 const cancelarEdicao = () => {
   idEdicao.value = 0;
-  descricaoEdicao.value = '';
+  categoriaEdicao.value = criarVazia();
 }
 
-const salvarEdicao = async (categoria: Categoria) => {
-  if (!descricaoEdicao.value.trim()) return;
+const salvarEdicao = async () => {
+  if (!categoriaEdicao.value.descricao.trim()) return;
 
   try {
-    categoria.descricao = descricaoEdicao.value;
-    await store.atualizarCategoria(categoria);
+    await store.atualizarCategoria(categoriaEdicao.value);
     cancelarEdicao();
   } catch (error) {
     console.log('Erro ao salvar a categoria: ', error);
@@ -44,11 +43,11 @@ const salvarEdicao = async (categoria: Categoria) => {
 }
 
 const adicionarCategoria = async () => {
-  if (!descricaoNovaCategoria.value.trim()) return;
+  if (!categoriaNova.value.descricao.trim()) return;
 
   try {
-    await store.adicionarCategoria(descricaoNovaCategoria.value);
-    descricaoNovaCategoria.value = '';
+    await store.adicionarCategoria(categoriaNova.value);
+    categoriaNova.value = criarVazia();
   } catch (error) {
     console.log('Erro ao adicionar categoria: ', error);
   }
@@ -64,42 +63,55 @@ const adicionarCategoria = async () => {
       <thead>
         <tr>
           <th class="text-left font-weight-bold">Descrição</th>
+          <th class="text-center font-weight-bold">Cumulativo</th>
           <th class="text-center font-weight-bold" style="width: 120px"></th>
         </tr>
       </thead>
 
       <tbody>
         <tr v-for="categoria in store.categorias" :key="categoria.id">
-          <td>
-            <div v-if="idEdicao === categoria.id" class="d-flex align-center">
-              <v-text-field v-model="descricaoEdicao" density="compact" hide-details variant="outlined" class="mr-2"
-                autofocus @keyup.enter="salvarEdicao(categoria)" @keyup.esc="cancelarEdicao" />
-              <v-btn icon="mdi-check" size="x-small" color="sucess" class="mr-1" varian="tonal"
-                @click="salvarEdicao(categoria)" />
+          <template v-if="idEdicao === categoria.id">
+            <td>
+              <v-text-field v-model="categoriaEdicao.descricao" density="compact" hide-details variant="outlined"
+                class="mr-2" autofocus @keyup.enter="salvarEdicao" @keyup.esc="cancelarEdicao" />
+            </td>
+            <td class="text-center">
+              <v-checkbox v-model="categoriaEdicao.cumulativo" density="compact" hide-details variant="outlined" />
+            </td>
+            <td>
+              <v-btn icon="mdi-check" size="x-small" color="sucess" class="mr-1" varian="tonal" @click="salvarEdicao" />
               <v-btn icon="mdi-close" size="x-small" color="error" variant="tonal" @click="cancelarEdicao" />
-            </div>
-
-            <div v-else class="d-flex align-center justify-space-between editable-cell"
-              @click="iniciarEdicao(categoria)">
+            </td>
+          </template>
+          <template v-else>
+            <td>
               <span>{{ categoria.descricao }}</span>
+            </td>
+            <td class="text-center">
+              <span><v-icon
+                  :icon="categoria.cumulativo ? 'mdi-checkbox-marked-outline' : 'mdi-checkbox-blank-outline'" /></span>
               <v-icon size="small" class="edit-icon" color="grey-lighten-1">mdi-pencil</v-icon>
-            </div>
-          </td>
-
-          <td class="text-center">
-            <v-btn icon="mdi-trash-can" color="error" variant="text" size="large"
-              @click="desativarCategoria(categoria)" />
-          </td>
+            </td>
+            <td class="text-center">
+              <v-btn icon="mdi-pencil" color="default" variant="text" size="x-small"
+                @click="iniciarEdicao(categoria)" />
+              <v-btn icon="mdi-trash-can" color="error" variant="text" size="x-small"
+                @click="desativarCategoria(categoria)" />
+            </td>
+          </template>
         </tr>
 
         <tr class="bg-grey-lighten-1">
           <td>
-            <v-text-field v-model="descricaoNovaCategoria" placeholder="Adicionar nova categoria..." density="compact"
+            <v-text-field v-model="categoriaNova.descricao" placeholder="Adicionar nova categoria..." density="compact"
               hideDetails variant="outlined" @keyup.enter="adicionarCategoria" />
           </td>
           <td class="text-center">
+            <v-checkbox v-model="categoriaNova.cumulativo" density="compact" hide-details variant="outlined" />
+          </td>
+          <td class="text-center">
             <v-btn color="primary" variant="elevated" size="small" prepend-icon="mdi-plus"
-              :disabled="!descricaoNovaCategoria.trim()" @click="adicionarCategoria">
+              :disabled="!categoriaNova.descricao.trim()" @click="adicionarCategoria">
               Salvar
             </v-btn>
           </td>

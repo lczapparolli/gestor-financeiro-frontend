@@ -11,9 +11,9 @@ export const useCategoriaStore = defineStore("categoria", {
       this.categorias = await categoriaService.listar();
     },
 
-    async adicionarCategoria(descricao: string) {
-      const categoria = await categoriaService.adicionar({ descricao });
-      this.categorias.push(categoria);
+    async adicionarCategoria(categoria: Categoria) {
+      const inserida = await categoriaService.adicionar(categoria);
+      this.categorias.push(inserida);
     },
 
     async desativarCategoria(categoria: Categoria) {
